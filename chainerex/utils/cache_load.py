@@ -8,6 +8,80 @@ import numpy
 import pandas
 
 
+def save_npz(filepath, datasets):
+    numpy.savez(filepath, *datasets)
+
+
+def load_npz(filepath):
+    load_data = numpy.load(filepath)
+    result = []
+    i = 0
+    while True:
+        key = 'arr_{}'.format(i)
+        if key in load_data.keys():
+            result.append(load_data[key])
+            i += 1
+        else:
+            break
+    if len(result) == 1:
+        result = result[0]
+    return result
+
+
+def save_pandas_hdf5(filepath, datasets):
+    store = pandas.HDFStore(filepath)
+    for i, d in enumerate(datasets):
+        store['arr_{}'.format(i)] = d
+    store.close()
+
+
+def load_pandas_hdf5(filepath):
+    load_store = pandas.HDFStore(filepath)
+    result = []
+    i = 0
+    while True:
+        key = '/arr_{}'.format(i)
+        if key in load_store.keys():
+            result.append(load_store[key])
+            i += 1
+        else:
+            break
+    if len(result) == 1:
+        result = result[0]
+    load_store.close()
+    return result
+
+
+def _cache_load_base(save_fn, load_fn, filepath, preprocess_fn, *args,
+                     **kwargs):
+    """
+    
+    Args:
+        save_fn (callable): save dataset function 
+        load_fn (callable): load dataset function
+        filepath (str): filepath to cache dataset
+        preprocess_fn (callable): dataset preparation function
+        *args: args for `preprocess_fn`
+        **kwargs: kwargs for `preprocess_fn`
+
+    Returns: dataset
+
+    """
+    if not os.path.exists(filepath):
+        if preprocess_fn is None:
+            raise ValueError('filepath {} does not exist, '
+                             'preprocess_fn must not be None'.format(filepath))
+        # Preprocess and cache(save) datasets
+        print('Preprocessing dataset...')
+        datasets = preprocess_fn(*args, **kwargs)
+        if not isinstance(datasets, tuple):
+            datasets = (datasets, )
+        save_fn(filepath, datasets)
+    # Now the datasets is ready.
+    assert os.path.exists(filepath)
+    return load_fn(filepath)
+
+
 def cache_load_npz(filepath, preprocess_fn, *args, **kwargs):
     """Load cached dataset if possible, otherwise create it by `preprocess_fn`
 
@@ -28,33 +102,8 @@ def cache_load_npz(filepath, preprocess_fn, *args, **kwargs):
     Returns: numpy dataset
 
     """
-    if not os.path.exists(filepath):
-        if preprocess_fn is None:
-            raise ValueError('filepath {} does not exist, '
-                             'preprocess_fn must not be None'.format(filepath))
-        # Preprocess and cache(save) datasets
-        print('Preprocessing dataset...')
-        datasets = preprocess_fn(*args, **kwargs)
-        if not isinstance(datasets, tuple):
-            datasets = (datasets, )
-        numpy.savez(filepath, *datasets)
-
-    # Now the datasets is ready.
-    assert os.path.exists(filepath)
-    load_data = numpy.load(filepath)
-    result = []
-    i = 0
-    while True:
-        key = 'arr_{}'.format(i)
-        if key in load_data.keys():
-            result.append(load_data[key])
-            i += 1
-        else:
-            break
-    if len(result) == 1:
-        result = result[0]
-    return result
-
+    return _cache_load_base(save_npz, load_npz, filepath, preprocess_fn,
+                            *args, **kwargs)
 
 def cache_load_pandas_hdf5(filepath, preprocess_fn, *args, **kwargs):
     """Load cached dataset if possible, otherwise create it by `preprocess_fn`
@@ -76,36 +125,8 @@ def cache_load_pandas_hdf5(filepath, preprocess_fn, *args, **kwargs):
     Returns: pandas Series/DataFrame dataset
 
     """
-    if not os.path.exists(filepath):
-        if preprocess_fn is None:
-            raise ValueError('filepath {} does not exist, '
-                             'preprocess_fn must not be None'.format(filepath))
-        # Preprocess and cache(save) datasets
-        print('Preprocessing dataset...')
-        datasets = preprocess_fn(*args, **kwargs)
-        if not isinstance(datasets, tuple):
-            datasets = (datasets, )
-        store = pandas.HDFStore(filepath)
-        for i, d in enumerate(datasets):
-            store['arr_{}'.format(i)] = d
-        store.close()
-
-    # Now the datasets is ready.
-    assert os.path.exists(filepath)
-    load_store = pandas.HDFStore(filepath)
-    result = []
-    i = 0
-    while True:
-        key = '/arr_{}'.format(i)
-        if key in load_store.keys():
-            result.append(load_store[key])
-            i += 1
-        else:
-            break
-    if len(result) == 1:
-        result = result[0]
-    load_store.close()
-    return result
+    return _cache_load_base(save_pandas_hdf5, load_pandas_hdf5, filepath,
+                            preprocess_fn, *args, **kwargs)
 
 
 if __name__ == '__main__':
@@ -114,7 +135,7 @@ if __name__ == '__main__':
 
     # mode 1: cache_load_npz demo
     # mode 2: cache_load_pandas_hdf5 demo
-    mode = 2
+    mode = 1
 
     if mode == 1:
         # Once you define preprocess_fn which prepares numpy data,
