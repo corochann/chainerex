@@ -105,6 +105,7 @@ def cache_load_npz(filepath, preprocess_fn, *args, **kwargs):
     return _cache_load_base(save_npz, load_npz, filepath, preprocess_fn,
                             *args, **kwargs)
 
+
 def cache_load_pandas_hdf5(filepath, preprocess_fn, *args, **kwargs):
     """Load cached dataset if possible, otherwise create it by `preprocess_fn`
 
