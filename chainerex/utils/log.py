@@ -1,5 +1,19 @@
-import json
 import os
+import json
+import numpy
+
+
+class JSONEncoderEX(json.JSONEncoder):
+    """Ref: https://stackoverflow.com/questions/27050108/convert-numpy-type-to-python"""
+    def default(self, obj):
+        if isinstance(obj, numpy.integer):
+            return int(obj)
+        elif isinstance(obj, numpy.floating):
+            return float(obj)
+        elif isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        else:
+            return super(JSONEncoderEX, self).default(obj)
 
 
 def save_json(filepath, params):
@@ -11,7 +25,7 @@ def save_json(filepath, params):
 
     """
     with open(filepath, 'w') as f:
-        json.dump(params, f, indent=4)
+        json.dump(params, f, indent=4, cls=JSONEncoderEX)
 
 
 def load_json(filepath):
@@ -36,6 +50,9 @@ if __name__ == '__main__':
         'b_str': 'string',
         'c_list': [1, 2, 3],
         'd_tuple': (1, 2),
+        'n_int_scalar': numpy.array(1),
+        'n_int_array': numpy.array([1]),
+        'n_float': numpy.array([[1.0, 2.0], [3.0, 4.0]]),
     }
     out_dir = cl.create_timedir()
     filepath = os.path.join(out_dir, 'args')
