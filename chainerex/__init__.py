@@ -1,3 +1,4 @@
+from chainerex import dataset  # NOQA
 from chainerex import links  # NOQA
 from chainerex import optimizers  # NOQA
 from chainerex import training  # NOQA
