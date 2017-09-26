@@ -13,6 +13,20 @@ def save_json(filepath, params):
     with open(filepath, 'w') as f:
         json.dump(params, f, indent=4)
 
+
+def load_json(filepath):
+    """load params, whicch is stored in json format.
+
+    Args:
+        filepath (str): filepath to save args
+
+    Returns (dict): params
+
+    """
+    with open(filepath, 'r') as f:
+        params = json.load(f)
+    return params
+
 if __name__ == '__main__':
     import chainerex.utils as cl
     # Demo
@@ -24,8 +38,11 @@ if __name__ == '__main__':
         'd_tuple': (1, 2),
     }
     out_dir = cl.create_timedir()
-    cl.save_json(os.path.join(out_dir, 'args'), args)
+    filepath = os.path.join(out_dir, 'args')
+    cl.save_json(filepath, args)
 
     # # Add additional information, it also work.
     # args.update({'e': 'ext_info'})
     # cl.save_json(os.path.join(out_dir, 'args'), args)
+    load_args = load_json(filepath)
+    print(type(load_args), load_args)
