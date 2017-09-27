@@ -1,6 +1,7 @@
 import os
 import json
 import numpy
+from chainer import cuda
 
 
 class JSONEncoderEX(json.JSONEncoder):
@@ -12,20 +13,32 @@ class JSONEncoderEX(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj, numpy.ndarray):
             return obj.tolist()
+        elif isinstance(obj, cuda.ndarray):
+            return cuda.to_cpu(obj).tolist()
         else:
             return super(JSONEncoderEX, self).default(obj)
 
 
-def save_json(filepath, params):
+def save_json(filepath, params, ignore_error=True):
     """save params in json format.
 
     Args:
         filepath (str): filepath to save args
         params (dict): args to be saved 
+        ignore_error (bool): if True, it will ignore exception with printing 
+            error logs, which prevents to stop
 
     """
-    with open(filepath, 'w') as f:
-        json.dump(params, f, indent=4, cls=JSONEncoderEX)
+    try:
+        with open(filepath, 'w') as f:
+            json.dump(params, f, indent=4, cls=JSONEncoderEX)
+    except Exception as e:
+        if not ignore_error:
+            raise e
+        else:
+            print('[WARNING] Error occurred at save_json, but ignoring...')
+            print('The file {} may not be saved.'.format(filepath))
+            print(e)
 
 
 def load_json(filepath):

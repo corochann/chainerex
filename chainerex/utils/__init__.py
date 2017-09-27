@@ -5,6 +5,7 @@ from chainerex.utils.cache import load_npz  # NOQA
 from chainerex.utils.cache import load_pandas_hdf5  # NOQA
 from chainerex.utils.cache import save_npz  # NOQA
 from chainerex.utils.cache import save_pandas_hdf5  # NOQA
+from chainerex.utils.log import JSONEncoderEX  # NOQA
 from chainerex.utils.log import load_json  # NOQA
 from chainerex.utils.log import save_json  # NOQA
 from chainerex.utils.create_timedir import create_timedir  # NOQA
