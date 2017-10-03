@@ -24,7 +24,7 @@ def save_json(filepath, params, ignore_error=True):
 
     Args:
         filepath (str): filepath to save args
-        params (dict): args to be saved 
+        params (dict or list): args to be saved 
         ignore_error (bool): if True, it will ignore exception with printing 
             error logs, which prevents to stop
 
@@ -47,7 +47,7 @@ def load_json(filepath):
     Args:
         filepath (str): filepath to save args
 
-    Returns (dict): params
+    Returns (dict or list): params
 
     """
     with open(filepath, 'r') as f:

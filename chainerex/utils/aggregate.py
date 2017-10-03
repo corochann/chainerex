@@ -7,7 +7,8 @@ from chainerex.utils.log import load_json
 from chainerex.utils.filesys import collect_files
 
 
-def aggregate_json(dirpath, file_name='args', filter_name=''):
+def aggregate_json(dirpath, file_name='args', filter_name='',
+                     filepath_column='filepath'):
     """aggregate files under `dirpath` recursively.
     
     All Files with name `fila_name` under `dirpath` which contains
@@ -16,18 +17,18 @@ def aggregate_json(dirpath, file_name='args', filter_name=''):
     Args:
         dirpath (str): Root directory path.
         filter_name (str or list): 
+        filepath_column (str): filepath column name
 
     Returns (pandas.DataFrame): data frame which contains args info.
 
     """
-    df_dict = {}
+    df_list = []
     error_count = 0
-    for index, path in enumerate(collect_files(dirpath, file_name)):
+    for path in collect_files(dirpath, file_name, filter_name=filter_name):
         try:
             params = load_json(path)
-            params.update({'filepath': path})
+            params.update({filepath_column: path})
             # print('path', path, 'params', params)
-            df_dict.update({index: params})
             df_list.append(params)
         except Exception as e:
             print('[WARNING] load_json failed in aggregate_json with path {}'
@@ -35,14 +36,13 @@ def aggregate_json(dirpath, file_name='args', filter_name=''):
             print(e)
             error_count += 1
 
-    df = pandas.DataFrame(df_dict)
+    df = pandas.DataFrame(df_list)
     if error_count > 0:
         print('aggregate_json finished with error_count {}'.format(error_count))
-    # return df.transpose()
-    #return df
-    return df.transpose().reset_index()
+    return df
+
 
 if __name__ == '__main__':
-    df = aggregate_json('.', 'args')
+    df = aggregate_json('.', 'args', filter_name='')
     print('df', df.shape, type(df))
     print(df)

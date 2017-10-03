@@ -22,7 +22,7 @@ def walk_all_files(directory):
                 yield path
 
 
-def collect_files(directory, file_name):
+def collect_files(directory, file_name, filter_name=''):
     """return all files with file name `file_name` inside specified directory.
 
     Ref: http://qiita.com/suin/items/cdef17e447ceeff6e79d
@@ -38,7 +38,7 @@ def collect_files(directory, file_name):
         # print('root', root, 'dirs', dirs, 'files', files)
         if file_name in files:
             path = os.path.join(root, file_name)
-            if os.path.isfile(path):
+            if os.path.isfile(path) and filter_name in path:
                 yield path
 
 
