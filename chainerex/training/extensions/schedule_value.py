@@ -70,10 +70,14 @@ def schedule_target_value(epoch_list, value_list, target, attr_name):
     Example usage:
     trainer.extend(schedule_target_value([2, 4, 7], [0.008, 0.006, 0.002], iterator, 'batch_size'))
     """
-    if len(epoch_list) != len(value_list):
-        raise ValueError('epoch_list length {} and value_list length {} '
-                         'must be same!'
-                         .format(len(epoch_list), len(value_list)))
+    if isinstance(epoch_list, list):
+        if not isinstance(value_list, list):
+            assert isinstance(value_list, float) or isinstance(value_list, int)
+            value_list = [value_list, ]
+        if len(epoch_list) != len(value_list):
+            raise ValueError('epoch_list length {} and value_list length {} '
+                             'must be same!'
+                             .format(len(epoch_list), len(value_list)))
     else:
         assert isinstance(epoch_list, float) or isinstance(epoch_list, int)
         assert isinstance(value_list, float) or isinstance(value_list, int)
