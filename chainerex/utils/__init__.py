@@ -1,4 +1,6 @@
 # import class and function
+from chainerex.utils.aggregate import aggregate_json  # NOQA
+from chainerex.utils.aggregate import aggregate_log  # NOQA
 from chainerex.utils.cache import cache_load_npz  # NOQA
 from chainerex.utils.cache import cache_load_pandas_hdf5  # NOQA
 from chainerex.utils.cache import load_npz  # NOQA
