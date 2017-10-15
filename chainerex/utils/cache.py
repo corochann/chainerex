@@ -6,6 +6,12 @@ import os
 
 import numpy
 import pandas
+import time
+
+
+def _check_path_exist(filepath):
+    if not os.path.exists(filepath):
+        raise IOError('{} not found'.format(filepath))
 
 
 def save_npz(filepath, datasets):
@@ -13,6 +19,7 @@ def save_npz(filepath, datasets):
 
 
 def load_npz(filepath):
+    _check_path_exist(filepath)
     load_data = numpy.load(filepath)
     result = []
     i = 0
@@ -36,6 +43,7 @@ def save_pandas_hdf5(filepath, datasets):
 
 
 def load_pandas_hdf5(filepath):
+    _check_path_exist(filepath)
     load_store = pandas.HDFStore(filepath)
     result = []
     i = 0
@@ -67,18 +75,26 @@ def _cache_load_base(save_fn, load_fn, filepath, preprocess_fn, *args,
     Returns: dataset
 
     """
+    SLEEP_TIME = 3  # 3sec
     if not os.path.exists(filepath):
         if preprocess_fn is None:
             raise ValueError('filepath {} does not exist, '
                              'preprocess_fn must not be None'.format(filepath))
         # Preprocess and cache(save) datasets
-        print('Preprocessing dataset...')
+        print('[INFO] _cache_load_base: Preprocessing dataset...')
         datasets = preprocess_fn(*args, **kwargs)
         if not isinstance(datasets, tuple):
             datasets = (datasets, )
         save_fn(filepath, datasets)
-    # Now the datasets is ready.
-    assert os.path.exists(filepath)
+    # Now the datasets should be ready.
+    retry_count = 0
+    while not os.path.exists(filepath):
+        # This case may happen when `save_fn` was async method.
+        print('[WARNING] {} not found, retry in {} sec.'
+              .format(filepath, SLEEP_TIME))
+        time.sleep(SLEEP_TIME)
+        retry_count += 1
+        assert retry_count < 100, '[ERROR] {} not found after cache.'
     return load_fn(filepath)
 
 

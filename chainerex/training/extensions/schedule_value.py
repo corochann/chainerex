@@ -93,7 +93,7 @@ def schedule_target_value(epoch_list, value_list, target, attr_name):
         nonlocal count
         value = value_list[count]
 
-        print('updating target to {}'.format(attr_name, value))
+        print('updating {} to {}'.format(attr_name, value))
         setattr(target, attr_name, value)
         count += 1
 
