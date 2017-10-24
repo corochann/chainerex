@@ -1,7 +1,10 @@
+"""
+This is duprecated, use `install_features_indexer` instead.
+"""
 import numpy
 import six
 
-from chainerex.dataset.indexer import BaseFeatureIndexer, ExtractBySliceNotSupportedError  # NOQA
+from chainerex.dataset.indexers import BaseFeatureIndexer, ExtractBySliceNotSupportedError  # NOQA
 
 
 class DatasetMixinEX(object):
