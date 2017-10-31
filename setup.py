@@ -2,7 +2,7 @@ from distutils.core import setup
 
 from setuptools import find_packages
 
-setup_requires = ['numpy']
+setup_requires = []
 install_requires = [
     'chainer>=2.0',
 ]
