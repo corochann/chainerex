@@ -201,28 +201,17 @@ class BalancedSerialIterator(iterator.Iterator):
         self.epoch = serializer('epoch', self.epoch)
         self.is_new_epoch = serializer('is_new_epoch', self.is_new_epoch)
         if self._order is not None:
-            try:
-                serializer('order', self._order)
-            except KeyError:
-                serializer('_order', self._order)
-        try:
-            self._previous_epoch_detail = serializer(
-                'previous_epoch_detail', self._previous_epoch_detail)
-        except KeyError:
-            # guess previous_epoch_detail for older version
-            self._previous_epoch_detail = self.epoch + \
-                (self.current_position - self.batch_size) / self.N_augmented
-            if self.epoch_detail > 0:
-                self._previous_epoch_detail = max(
-                    self._previous_epoch_detail, 0.)
-            else:
-                self._previous_epoch_detail = -1.
+            serializer('order', self._order)
+        self._previous_epoch_detail = serializer(
+            'previous_epoch_detail', self._previous_epoch_detail)
 
         for label, index_iterator in self.labels_iterator_dict.items():
-            self.labels_iterator_dict[label] = serializer(
-                'index_iterator_{}'.format(label),
-                self.labels_iterator_dict[label]
-            )
+            # self.labels_iterator_dict[label] = serializer(
+            #     'index_iterator_{}'.format(label),
+            #     self.labels_iterator_dict[label]
+            # )
+            self.labels_iterator_dict[label].serialize(
+                serializer['index_iterator_{}'.format(label)])
 
     def _update_order(self):
         indices_list = []
