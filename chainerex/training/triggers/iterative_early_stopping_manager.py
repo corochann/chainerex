@@ -48,3 +48,6 @@ class IterativeEarlyStoppingManager(object):
             return True
         return False
 
+    @property
+    def iterate_index(self):
+        return self.iterate_count - 1
