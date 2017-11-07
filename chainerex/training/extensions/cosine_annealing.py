@@ -71,8 +71,18 @@ class CosineAnnealing(Extension):
     def __call__(self, trainer):
         current_epoch = trainer.updater.epoch_detail
         # if self.current_stage >= len(self.epoch_list) - 1:
-        if current_epoch < self.epoch_list[0] or current_epoch > self.epoch_list[-1]:
+        if current_epoch < self.epoch_list[0]:
             # Out of range of this scheduler, do nothing.
+            return
+        if current_epoch > self.epoch_list[-1]:
+            # Out of range of this scheduler, do nothing except invoke `callback_fn`
+            end_stage = len(self.epoch_list) - 1
+            if self.current_stage != end_stage:
+                if self.verbose:
+                    print('current_stage updated from {} to {}'
+                          .format(self.current_stage, end_stage))
+                self.callback_fn(trainer, self.current_stage)
+                self.current_stage = end_stage
             return
 
         # --- Check current stage ---
@@ -98,7 +108,7 @@ class CosineAnnealing(Extension):
                     epoch_stage_end = self.epoch_list[self.current_stage + 1]
                     break
             if self.current_stage >= len(self.epoch_list) - 1:
-                # It already reaches last epoch in epoch_list, do nothing
+                print('[WARNING] it is expected not to come here...')
                 return
 
         # Get optimizer
