@@ -32,13 +32,23 @@ class CosineAnnealing(Extension):
 
     .. admonition:: Example
 
-        >>> from chainer import training
+        >>> import os
+        >>> from chainer import training, serializers
         >>> from chainer.training import extensions
         >>> trainer = training.Trainer(updater, (args.epoch, 'epoch'), out=args.out)
         >>> # --- observe_lr ---
         >>> trainer.extend(extensions.observe_lr(observation_key='lr'))
+        >>> # --- Callback function for snapshot ensemble ---
+        >>> def callback_fn(trainer, stage):
+        >>>     print('callback_fn stage={}'.format(stage))
+        >>>     model_path = os.path.join(out_dir, 'model_cosine{}.npz'.format(stage))
+        >>>     print('save model to {}'.format(model_path))
+        >>>     serializers.save_npz(model_path, model)
+        
         >>> # --- CosineAnnealing of learning rate ---
-        >>> trainer.extend(CosineAnnealing(epoch_list=[0, 2, 4, 8, args.epoch], lr_max=0.1, lr_min=0.0, verbose=False), trigger=(100, 'iteration'))
+        >>> trainer.extend(CosineAnnealing(epoch_list=[0, 2, 4, 8, args.epoch], 
+        >>>     lr_max=0.1, lr_min=0.0, callback_fn=callback_fn verbose=False), 
+        >>>     trigger=(100, 'iteration'))
 
     """
 
