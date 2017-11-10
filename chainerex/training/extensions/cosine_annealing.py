@@ -65,8 +65,8 @@ class CosineAnnealing(Extension):
         self.optimizer_name = optimizer_name
         self.attr_name = attr_name
         self.verbose = verbose
+        self.callback_fn = callback_fn
         self.optimizer = None
-        self.callback_fn = None
 
     def __call__(self, trainer):
         current_epoch = trainer.updater.epoch_detail
