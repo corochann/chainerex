@@ -47,7 +47,7 @@ class CosineAnnealing(Extension):
         
         >>> # --- CosineAnnealing of learning rate ---
         >>> trainer.extend(CosineAnnealing(epoch_list=[0, 2, 4, 8, args.epoch], 
-        >>>     lr_max=0.1, lr_min=0.0, callback_fn=callback_fn verbose=False), 
+        >>>     lr_max=0.1, lr_min=0.0, callback_fn=callback_fn, verbose=False),
         >>>     trigger=(100, 'iteration'))
 
     """

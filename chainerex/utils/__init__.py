@@ -11,6 +11,7 @@ from chainerex.utils.cache import save_pandas_hdf5  # NOQA
 from chainerex.utils.create_timedir import create_timedir  # NOQA
 from chainerex.utils.filesys import collect_files  # NOQA
 from chainerex.utils.filesys import walk_all_files  # NOQA
+from chainerex.utils.hacking import install_indexers  # NOQA
 from chainerex.utils.log import JSONEncoderEX  # NOQA
 from chainerex.utils.log import load_json  # NOQA
 from chainerex.utils.log import save_json  # NOQA
