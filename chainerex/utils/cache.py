@@ -15,6 +15,8 @@ def _check_path_exist(filepath):
 
 
 def save_npz(filepath, datasets):
+    if not isinstance(datasets, (list, tuple)):
+        datasets = (datasets, )
     numpy.savez(filepath, *datasets)
 
 
@@ -36,6 +38,9 @@ def load_npz(filepath):
 
 
 def save_pandas_hdf5(filepath, datasets):
+    if not isinstance(datasets, (list, tuple)):
+        datasets = (datasets, )
+
     store = pandas.HDFStore(filepath)
     for i, d in enumerate(datasets):
         store['arr_{}'.format(i)] = d
