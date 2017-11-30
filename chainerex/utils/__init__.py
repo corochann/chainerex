@@ -15,8 +15,8 @@ from chainerex.utils.hacking import install_indexers  # NOQA
 from chainerex.utils.log import JSONEncoderEX  # NOQA
 from chainerex.utils.log import load_json  # NOQA
 from chainerex.utils.log import save_json  # NOQA
-from chainerex.utils.plot import plot_roc_auc_curve  # NOQA
-from chainerex.utils.time_measure import TimeMeasure  # NOQA
-
 # third_party
-from chainerex.utils.third_party.xgb_utils import convert_evals_result_to_log_report  # NOQA
+from chainerex.utils.third_party.xgb_utils import \
+    convert_evals_result_to_log_report  # NOQA
+from chainerex.utils.time_measure import TimeMeasure  # NOQA
+from chainerex.utils.visualize.plot import plot_roc_auc_curve  # NOQA

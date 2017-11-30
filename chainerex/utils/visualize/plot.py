@@ -1,7 +1,43 @@
+"""
+2017.11.25
+Note the name has changed to 
+
+Original `plot_roc_auc_curve` method has changed to the name 
+`plot_roc_auc_curve_by_fpr_tpr`
+And `plot_roc_auc_curve` as implemented as more convenient function
+"""
 import matplotlib.pyplot as plt
+from sklearn import metrics
 
 
-def plot_roc_auc_curve(filepath, fpr, tpr, roc_auc=None, title=None):
+def plot_roc_auc_curve(filepath, label, prob, pos_label=1, title=None):
+    """Plot ROC-AUC curve, and save in png file.
+
+    Ref: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html#sphx-glr-auto-examples-model-selection-plot-roc-py
+
+    Admonition ...Examples
+        >>> import numpy as np
+        >>> test_label = np.array([1, 1, 0, 0])
+        >>> test_score = np.array([0.1, 0.4, 0.35, 0.8])
+        >>> plot_roc_auc_curve('roc.png', test_label, test_score)
+    Args:
+        filepath: 
+        label: 
+        prob: 
+        title: 
+
+    Returns:
+
+    """
+    roc_auc = metrics.roc_auc_score(label, prob)
+    fpr, tpr, thresholds = metrics.roc_curve(label, prob, pos_label=pos_label)
+    plot_roc_auc_curve_by_fpr_tpr(filepath, fpr, tpr, roc_auc=roc_auc,
+                                  title=title)
+    return roc_auc, fpr, tpr, thresholds
+
+
+def plot_roc_auc_curve_by_fpr_tpr(filepath, fpr, tpr, roc_auc=None,
+                                  title=None):
     """Plot ROC-AUC curve, and save in png file.
 
     Ref: http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html#sphx-glr-auto-examples-model-selection-plot-roc-py
@@ -13,7 +49,7 @@ def plot_roc_auc_curve(filepath, fpr, tpr, roc_auc=None, title=None):
         >>> test_score = np.array([0.1, 0.4, 0.35, 0.8])
         >>> roc_auc = metrics.roc_auc_score(test_label, test_prob)
         >>> fpr, tpr, thresholds = metrics.roc_curve(test_label, test_prob, pos_label=1)
-        >>> plot_roc_auc_curve('roc.png', fpr, tpr, roc_auc)
+        >>> plot_roc_auc_curve_by_fpr_tpr('roc.png', fpr, tpr, roc_auc)
     
     Args:
         filepath (str): 
@@ -43,10 +79,9 @@ def plot_roc_auc_curve(filepath, fpr, tpr, roc_auc=None, title=None):
 
 if __name__ == '__main__':
     import numpy as np
-    from sklearn import metrics
 
     test_label = np.array([0, 0, 1, 1])
     test_score = np.array([0.1, 0.4, 0.35, 0.8])
     roc_auc = metrics.roc_auc_score(test_label, test_score)
     fpr, tpr, thresholds = metrics.roc_curve(test_label, test_score, pos_label=1)
-    plot_roc_auc_curve('roc.png', fpr, tpr, roc_auc)
+    plot_roc_auc_curve_by_fpr_tpr('roc.png', fpr, tpr, roc_auc)

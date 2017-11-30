@@ -27,6 +27,10 @@ Usage 2. with ... statement
 from time import time
 
 
+# Singleton time measure instance
+_chainerex_tm_singleton = None
+
+
 class TimeMeasure:
 
     DEFAULT_TAG = 'time'
@@ -51,6 +55,13 @@ class TimeMeasure:
         self.tag_count_dict = {}
         self.tag_time_dict = {}
         self.t = time()
+
+    @classmethod
+    def get_instance(cls, tag=None, loglevel=5):
+        global _chainerex_tm_singleton
+        if _chainerex_tm_singleton is None:
+            _chainerex_tm_singleton = cls(tag=tag, loglevel=loglevel)
+        return _chainerex_tm_singleton
 
     def _update_tag_dict(self, tag, t):
         if self.tag in self.tag_time_dict.keys():
@@ -101,7 +112,8 @@ class TimeMeasure:
 
 if __name__ == '__main__':
     # Demo
-    tm = TimeMeasure(loglevel=4)
+    # tm = TimeMeasure(loglevel=4)
+    tm = TimeMeasure.get_instance(loglevel=4)
     num_repeat = 10000
     for _ in range(num_repeat):
         a = 5 ** 5
