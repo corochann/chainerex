@@ -56,7 +56,7 @@ class ResidualAdd(function_node.FunctionNode):
         self.rhs_ch = rhs.shape[1]
         if self.lhs_ch < self.rhs_ch:
             lhs += rhs[:, :self.lhs_ch, :, :]
-            return lhs
+            return lhs,
             # pyramid add
             # rhs[:, :self.lhs_ch, :, :] += lhs
             # return rhs,
@@ -83,7 +83,8 @@ def residual_add(lhs, rhs):
     """
 
     # x: (mb, ch_x, h, w), h: (mb, ch_h, h, w)
-    # output h: (mb, ch_h, h, w) regardless of the size of `ch_x`.
+    # output h: (mb, ch_h, h, w). shape is always same with h (lhs),
+    # regardless of the size of `ch_x`.
     h = pyramid_add(h, x)
     
     Args:
